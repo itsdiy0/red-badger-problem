@@ -46,7 +46,7 @@ class Robot:
                 prev_x, prev_y = self.x, self.y
                 self.move_forward()
                 if self.is_off_grid(grid):
-                    grid.scents.add((self.x, self.y, self.orientation))
+                    grid.scents.add((prev_x, prev_y, self.orientation))
                     self.x, self.y = prev_x, prev_y
                     self.lost = True
                     return
