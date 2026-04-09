@@ -31,6 +31,32 @@ class Robot:
         elif self.orientation == 'W':
             self.x -= 1
 
+    def is_off_grid(self, grid):
+        return self.x < 0 or self.y < 0 or self.x > grid.max_x or self.y > grid.max_y
+
+    def execute(self, instructions, grid):
+        for cmd in instructions:
+            if cmd == 'L':
+                self.turn_left()
+            elif cmd == 'R':
+                self.turn_right()
+            elif cmd == 'F':
+                if (self.x, self.y, self.orientation) in grid.scents:
+                    continue  # ignore this F instruction
+                prev_x, prev_y = self.x, self.y
+                self.move_forward()
+                if self.is_off_grid(grid):
+                    grid.scents.add((self.x, self.y, self.orientation))
+                    self.x, self.y = prev_x, prev_y
+                    self.lost = True
+                    return
+
+    def result(self):
+        status = f"{self.x} {self.y} {self.orientation}"
+        if self.lost:
+            status += " LOST"
+        return status
+    
 def parse_input(data):
     lines = [line.strip() for line in data.strip().splitlines() if line.strip()]
     max_x, max_y = map(int, lines[0].split())
@@ -49,6 +75,6 @@ if __name__ == "__main__":
     import sys
     data = sys.stdin.read()
     grid, robots = parse_input(data)
-    print(grid.max_x, grid.max_y)
     for robot, instructions in robots:
-        print(robot.x, robot.y, robot.orientation, instructions)
+        robot.execute(instructions, grid)
+        print(robot.result())
