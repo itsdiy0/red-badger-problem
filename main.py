@@ -13,6 +13,24 @@ class Robot:
         self.orientation = orientation
         self.lost = False
 
+    def turn_left(self):
+        idx = ORIENTATIONS.index(self.orientation)
+        self.orientation = ORIENTATIONS[(idx - 1) % 4]
+
+    def turn_right(self):
+        idx = ORIENTATIONS.index(self.orientation)
+        self.orientation = ORIENTATIONS[(idx + 1) % 4]
+
+    def move_forward(self):
+        if self.orientation == 'N':
+            self.y += 1
+        elif self.orientation == 'S':
+            self.y -= 1
+        elif self.orientation == 'E':
+            self.x += 1
+        elif self.orientation == 'W':
+            self.x -= 1
+
 def parse_input(data):
     lines = [line.strip() for line in data.strip().splitlines() if line.strip()]
     max_x, max_y = map(int, lines[0].split())
